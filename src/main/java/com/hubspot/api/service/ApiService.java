@@ -23,8 +23,13 @@ import com.hubspot.api.entity.Partner;
 
 public interface ApiService {
 	
+	String getURL = "https://candidate.hubteam.com/candidateTest/v1/partners?userKey=bede60f886f7068a632c7911919d";
+
+	String postURL = "https://candidate.hubteam.com/candidateTest/v1/results?userKey=bede60f886f7068a632c7911919d";
+
+	
 	// function to get the list of partners from the api
-	public List<Partner> retrievePartnersAvailability(String url);
+	public List<Partner> retrievePartnersAvailability();
 	
 	// function to get the dates of the partner on which they can attend the conference
 	public List<Date> feasibleDatesForPartner(Partner partner);
@@ -38,10 +43,10 @@ public interface ApiService {
 	// function to create the invitation list
 	public List<Invitation> getInvites(List<Partner> partners);
 
-	default String readUrl(String urlString) throws Exception {
+	default String readUrl() throws Exception {
 		BufferedReader reader = null;
 		try {
-			URL url = new URL(urlString);
+			URL url = new URL(getURL);
 			reader = new BufferedReader(new InputStreamReader(url.openStream()));
 			StringBuffer buffer = new StringBuffer();
 			int read;
@@ -56,7 +61,7 @@ public interface ApiService {
 		}
 	}
 
-	default String rrsHttpPost(String jsonBody, String url) {
+	default String rrsHttpPost(String invitationList) {
 
 		HttpPost post;
 		HttpClient client;
@@ -65,12 +70,12 @@ public interface ApiService {
 		try {
 
 			// create HttpPost and HttpClient object
-			post = new HttpPost(url);
+			post = new HttpPost(postURL);
 			client = HttpClientBuilder.create().build();
 
 			// setup output message by copying JSON body into 
 			// apache StringEntity object along with content type
-			entity = new StringEntity(jsonBody, HTTP.UTF_8);
+			entity = new StringEntity(invitationList, HTTP.UTF_8);
 			entity.setContentEncoding(HTTP.UTF_8);
 			entity.setContentType("text/json");
 
@@ -106,7 +111,6 @@ public interface ApiService {
 		try {
 			arrayToJson = objectMapper.writeValueAsString(inviteesList);
 		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -25,13 +25,13 @@ import com.hubspot.api.entity.Partner;
 public class ApiServiceImpl implements ApiService {
 
 	@Override
-	public List<Partner> retrievePartnersAvailability(String url) {
+	public List<Partner> retrievePartnersAvailability() {
 
 		try {
 
 			List<Partner> partnerList = new ArrayList<Partner>();
 
-			String jsonData = readUrl(url);			
+			String jsonData = readUrl();			
 			System.out.println(jsonData);
 
 			JSONParser parser = new JSONParser();	    	

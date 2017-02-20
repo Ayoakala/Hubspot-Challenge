@@ -2,33 +2,18 @@ package com.hubspot.api.controller;
 
 import java.util.List;
 
-import org.eclipse.persistence.sessions.serializers.JSONSerializer;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonPrimitive;
 import com.hubspot.api.entity.Invitation;
 import com.hubspot.api.entity.Partner;
 import com.hubspot.api.service.ApiService;
 
 @RestController
 public class ApiController {
-		
-	final static String getURL = "https://candidate.hubteam.com/candidateTest/v1/partners?userKey=bede60f886f7068a632c7911919d";
-
-	final static String postURL = "https://candidate.hubteam.com/candidateTest/v1/results?userKey=bede60f886f7068a632c7911919d";
-
+	
 	@Autowired
 	public ApiService service;
 
@@ -36,10 +21,16 @@ public class ApiController {
 	
 	private List<Invitation> inviteesList;
 
+	// run the server and call "localhost:8080/hubspot-api/partners"
+	
+	// calling the rest api GET request for partners list
+	// then processing that data through the algorithm to retrieve
+	// the best date for the country to host the conference
+	// and the make a post request based on that URL
 	@RequestMapping(method=RequestMethod.GET, value="/partners")
-	public String retrievePartnersAvailability() {
+	public String sendInvitation() {
 		
-		partnerList = service.retrievePartnersAvailability(getURL);
+		partnerList = service.retrievePartnersAvailability();
 		
 		if(partnerList == null) {
 			System.out.println("There was error processing the partner list!!");
@@ -53,6 +44,6 @@ public class ApiController {
 
 		String invitationList = service.stringToJSON(inviteesList);
 		
-		return service.rrsHttpPost(invitationList, postURL);
+		return service.rrsHttpPost(invitationList);
 	}
 }
